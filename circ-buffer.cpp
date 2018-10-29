@@ -48,9 +48,9 @@ CircBuffer::CircBuffer(void){}
  */
 CircBufferStatus_t CircBuffer::init(uint8_t length){
 	// check max length
-    if(length > MAX_BUF_SIZE){
-        return CB_ERROR;
-    }
+	if(length > MAX_BUF_SIZE){
+		return CB_ERROR;
+	}
 	
 	// check if buffer has not yet been initalized
 	if(this->buffer != NULL){
