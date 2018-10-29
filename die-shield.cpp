@@ -238,7 +238,7 @@ float DieShield::getSensitivity(){
  *****************************************************************************/
 
 /* Initialize die-shield operation:
- *	set shake callback
+ *  set shake callback
  *  initialize sampling buffers
  *  initialize pins
  *  initialize Timer1 to 200 Hz
