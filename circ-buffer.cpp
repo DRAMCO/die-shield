@@ -109,9 +109,6 @@ float CircBuffer::getAverage(void){
 CircBufferStatus_t CircBuffer::put(float data){
 	// check if buffer is initalized
 	if(this->buffer != NULL){
-		// store last value (in case it gets "pushed out")
-		float lastValue = this->buffer[this->tail];
-
 		// store value at the head of the buffer
 		this->buffer[this->head] = data;
 		// move head
@@ -123,12 +120,12 @@ CircBufferStatus_t CircBuffer::put(float data){
 
 		// check if last byte has been overwritten (pushed out)
 		if(this->head == this->tail){
-			// move tail
-			this->tail = (this->tail + 1) % this->length;
+			// correct sum
+			this->sum -= this->buffer[this->tail];
 			// correct fill
 			this->fill = this->length;
-			// correct sum
-			this->sum -= lastValue;
+			// move tail
+			this->tail = (this->tail + 1) % this->length;
 		}
 
 		// update avg
