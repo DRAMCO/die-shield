@@ -41,27 +41,27 @@
  
 #include "die-shield.h"
 
-#define ROLLING_TRESHOLD 500 // ms
+#define RELEASE_TRESHOLD 500 // ms
 
 #define BUTTON_S1 2 // D2 (INT0)
 
 bool buttonPressed = false;
-bool newRoll = false;
+bool newThrow = false;
 bool dieShaking = false;
-bool dieRolling = false;
+bool dieReleased = false;
 unsigned long prevShakeTime = 0;  
 unsigned int shakeCounter = 0;
 
 /* ISR for Button S1 */
 void s1Pressed(void){
-  if(!newRoll){ // ignore button press when roll cycle has started
+  if(!newThrow){ // ignore button press when throw cycle has started
     buttonPressed = true;
   }
 }
 
 /* Callback for the Die shake event */
 ShakeCallback_t iAmShaking(void){
-  if(!dieRolling){ // ignore shake when roll animation has started
+  if(!dieReleased){ // ignore shake when roll animation has started
     dieShaking = true;
   }
 }
@@ -81,13 +81,13 @@ void loop(){
   
   // shake event has been called
   if(dieShaking){
-    if(shakeCounter==0){ // first shake (of the roll cylce)
+    if(shakeCounter==0){ // first shake (of the throw cylce)
       // show a new value
       Die.roll();
     }
     else{ // another shake
-      // start roll cycle
-      newRoll = true; 
+      // start throw cycle
+      newThrow = true; 
       // show a new value
       Die.roll();
     }
@@ -101,19 +101,19 @@ void loop(){
     dieShaking = false;
   }
   
-  // roll cycle has started
-  if(newRoll){
+  // throw cycle has started
+  if(newThrow){
     // detect if shaking has stopped (die is released)
-    if(shakeTime-prevShakeTime > ROLLING_TRESHOLD){
+    if(shakeTime-prevShakeTime > RELEASE_TRESHOLD){
       // to ignore new shakes while die is rolling
-      dieRolling = true;
+      dieReleased = true;
       // start roll animation (the more shakes have been counted, the longer it will roll)
       Die.roll(shakeCounter);
       
-      // end roll cycle
+      // end throw cycle
       shakeCounter = 0; 
-      newRoll = false;
-      dieRolling = false;
+      newThrow = false;
+      dieReleased = false;
     }
   }
   
