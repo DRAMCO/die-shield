@@ -48,7 +48,7 @@ CircBuffer::CircBuffer(void){}
  */
 CircBufferStatus_t CircBuffer::init(uint8_t length){
 	// check max length
-	if(length > MAX_BUF_SIZE){
+	if(length+1 > MAX_BUF_SIZE){
 		return CB_ERROR;
 	}
 	
@@ -58,18 +58,17 @@ CircBufferStatus_t CircBuffer::init(uint8_t length){
 	}
 
 	// allocate memory for the buffer
-	this->buffer = (float*)malloc(sizeof(float)*length);
+	this->buffer = (float*)malloc(sizeof(float)*(length+1));
 	if(this->buffer == NULL){
 		return CB_NOT_INITIALIZED;
 	}
 	
 	// initialize attributes
-	this->length = length;
+	this->length = length+1;
 	this->head = 0;
 	this->tail = 0;
 	this->fill = 0;
 	this->sum = 0;
-	this->avg = 0;
 
 	return CB_SUCCESS;
 }
@@ -82,7 +81,6 @@ void CircBuffer::reset(void){
 	this->tail = 0;
 	this->fill = 0;
 	this->sum = 0;
-	this->avg = 0;
 }
 
 /* Returns true when the buffer is empty, and false otherwise.
@@ -100,8 +98,13 @@ uint8_t CircBuffer::getFill(void){
 
 /* Returns the average of all the values stored in the buffer.
  */
-float CircBuffer::getAverage(void){
-	return this->avg;
+CircBufferStatus_t CircBuffer::getAverage(float * avg){
+	if(this->fill != 0){
+		*avg = this->sum/this->fill;
+		return CB_SUCCESS;
+	}
+	
+	return CB_ERROR;
 }
 
 /* Put a value in the buffer
@@ -123,16 +126,10 @@ CircBufferStatus_t CircBuffer::put(float data){
 			// correct sum
 			this->sum -= this->buffer[this->tail];
 			// correct fill
-			this->fill = this->length;
+			this->fill--;
 			// move tail
 			this->tail = (this->tail + 1) % this->length;
 		}
-
-		// update avg
-		if(this->fill == 0){
-			return CB_ERROR;
-		}
-		this->avg = (this->sum / this->fill);
 
 		return CB_SUCCESS;
 	}
@@ -155,8 +152,12 @@ CircBufferStatus_t CircBuffer::get(float * data){
 	if(!this->isEmpty()){
 		// return last value in the buffer
 		*data = this->buffer[this->tail];
+		// decrease sum
+		this->sum -= this->buffer[this->tail];
 		// move the tail
 		this->tail = (this->tail + 1) % this->length;
+		// decrease fill
+		this->fill--;
 
 		return CB_SUCCESS;
 	}

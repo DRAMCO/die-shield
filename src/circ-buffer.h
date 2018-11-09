@@ -64,7 +64,7 @@ class CircBuffer{
 		uint8_t getFill();
 		CircBufferStatus_t put(float data);
 		CircBufferStatus_t get(float * data);
-		float getAverage(void);
+		CircBufferStatus_t getAverage(float * avg);
 	
 	private:
 		float * buffer;
@@ -73,7 +73,6 @@ class CircBuffer{
 		uint8_t length;
 		uint8_t fill;
 		float sum;
-		float avg;
 };
 
 #endif	/* __CIRC_BUFFER_H__ */

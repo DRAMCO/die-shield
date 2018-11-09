@@ -66,7 +66,6 @@ class DieShield{
 	
 		DieStatus_t begin(void);
 		DieStatus_t begin(ShakeCallback_t cb);
-		//DieStatus_t attachShakeCallback(ShakeCallback_t cb);
 			
 		void roll(void);
 		void roll(int nrShakes);

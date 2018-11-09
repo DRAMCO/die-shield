@@ -60,7 +60,7 @@ void s1Pressed(void){
 }
 
 /* Callback for the Die shake event */
-ShakeCallback_t iAmShaking(void){
+void iAmShaking(void){
   if(!dieReleased){ // ignore shake when roll animation has started
     dieShaking = true;
   }

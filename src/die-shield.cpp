@@ -115,7 +115,7 @@ DieShield::DieShield(){
 
 /* Begin operation of the die and do not assign a shake callback.
  */
-DieStatus_t DieShield::begin(){
+DieStatus_t DieShield::begin(void){
 	return this->init(NULL);
 }
 
@@ -193,9 +193,10 @@ void DieShield::show(DieValue_t value){
 DieStatus_t DieShield::detectShake(void){
 	bool shakeDetected = false;
 
-	float xAvg = this->x.getAverage();
-	float yAvg = this->y.getAverage();
-	float zAvg = this->z.getAverage();
+	float xAvg, yAvg, zAvg;
+	this->x.getAverage(&xAvg);
+	this->y.getAverage(&yAvg);
+	this->z.getAverage(&zAvg);
 	// detect shake
 	if(abs(xAvg - this->prevX) > this->sensitivity){
 		// shake detected
